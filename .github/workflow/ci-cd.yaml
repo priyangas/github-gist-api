@@ -1,0 +1,21 @@
+name: ci-cd
+on:
+ push:
+  branches: ["main"]
+jobs: 
+  build-push
+runs-on: "ubuntu-latest"
+steps:
+- name: build docker image
+  runs: | 
+    docker build -t github-gists-api .
+- name: docker login
+  with: docker/actions-login
+  username: ${{secrets.DOCKER_USERNAME}} 
+  password: ${{ secrets.DOCKER_PASSWORD}}
+- name: docker tagging
+  runs: |
+    docker tag github-gists-api ${{secrets.DOCKER_USERNAME}}/github-gists-api
+- name: docker push
+  runs: | 
+    docker push ${{secrets.DOCKER_USERNAME}}/github-gists-api
